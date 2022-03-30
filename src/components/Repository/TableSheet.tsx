@@ -1,38 +1,42 @@
 import { useEffect, useState } from 'react';
 import Table from 'react-bootstrap/Table';
 import Button from 'react-bootstrap/Button';
+import Modal from 'react-bootstrap/Modal';
 import Moment from 'moment';
 
+function TableSheet(props) {
+	const [data, setData] = useState([]);
+	const [editId, setEditId] = useState("");
+	const [owner, setOwner] = useState("");
+	const [projectname, setProjectname] = useState("");
+	const [projecturl, setProjecturl] = useState("");
+	const [stars, setStars] = useState(0);
+	const [forks, setForks] = useState(0);
+	const [issues, setIssues] = useState(0);
+	const [created, setCreated] = useState("");
+	const [show, setShow] = useState(false);
 
-function TableSheet() {
-	const [data, setData] = useState([{
-		_id: 1234,
-		owner: "shalex9",
-		projectname: "krasotka",
-		projecturl: "https://github.com/Shalex9/krasotka",
-		stars: 1,
-		forks: 1,
-		issues: 1,
-		created: "2016-01-04 10:34:23"
-	}]);
+	const handleClose = () => setShow(false);
+	useEffect(() => { setData(props.data.data) }, [props])
+	useEffect(() => { changeEditObj() }, [editId])
 
-	function openRepo() { }
-	function editRepo() { }
-	function deleteRepo() { }
-
-	// const getData = () => {
-	// }
-
-	// useEffect(() => {
-	// 	getData();
-	// }, [])
+	function changeEditObj() {
+		let obj = data?.find(e => e._id === editId);
+		setOwner(obj?.owner);
+		setProjectname(obj?.projectname);
+		setProjecturl(obj?.projecturl);
+		setStars(obj?.stars);
+		setForks(obj?.forks);
+		setIssues(obj?.issues);
+		setCreated(obj?.created);
+	}
 
 	return (
 		<div>
 			<br />
-			<p>Info about repositories:</p>
+			<h3>Table saved repositories:</h3>
 
-			{data.length > 0 ?
+			{data && data.length > 0 ?
 				(<Table striped bordered hover>
 					<thead>
 						<tr>
@@ -57,13 +61,73 @@ function TableSheet() {
 								<td>{item.issues}</td>
 								<td>{Moment(item.created).format('d MMM yyyy')}</td>
 								<td>
-									<Button onClick={openRepo} size='sm' variant='primary'>Show</Button>
-									<Button onClick={editRepo} size='sm' variant='warning'>Edit</Button>
-									<Button onClick={deleteRepo} size='sm' variant='danger'>Delete</Button>
+									<Button onClick={() => { setEditId(item._id); setShow(true); }}
+										className="button-margin"
+										size='sm'
+										variant='warning'>
+										Edit
+									</Button>
+									<Button onClick={() => props.onClick("delete", { _id: item._id })}
+										className="button-margin"
+										size='sm'
+										variant='danger'>
+										Delete
+									</Button>
 								</td>
 							</tr>
 						))}
 					</tbody>
+
+					<Modal show={show} onHide={handleClose}>
+						<Modal.Header closeButton>
+							<Modal.Title>Edit repository data</Modal.Title>
+						</Modal.Header>
+						<Modal.Body>
+							<form className='login-form'>
+								<div className='form-group'>
+									<input onChange={(e) => { setOwner(e.target.value) }} name='owner' defaultValue={owner} className='form-control input' placeholder='owner'></input>
+								</div>
+								<div className='form-group'>
+									<input onChange={(e) => { setProjectname(e.target.value) }} name='projectname' defaultValue={projectname} className='form-control input' placeholder='projectname'></input>
+								</div>
+								<div className='form-group'>
+									<input onChange={(e) => { setProjecturl(e.target.value) }} name='projecturl' defaultValue={projecturl} className='form-control input' placeholder='projecturl'></input>
+								</div>
+								<div className='form-group'>
+									<input onChange={(e) => { setStars(Number(e.target.value)) }} name='stars' defaultValue={stars} className='form-control input' placeholder='stars'></input>
+								</div>
+								<div className='form-group'>
+									<input onChange={(e) => { setForks(Number(e.target.value)) }} name='forks' defaultValue={forks} className='form-control input' placeholder='forks'></input>
+								</div>
+								<div className='form-group'>
+									<input onChange={(e) => { setIssues(Number(e.target.value)) }} name='issues' defaultValue={issues} className='form-control input' placeholder='issues'></input>
+								</div>
+								<div className='form-group'>
+									<input onChange={(e) => { setCreated(e.target.value) }} name='created' defaultValue={Moment(created).format('d MMM yyyy')} className='form-control input' placeholder='created'></input>
+								</div>
+							</form>
+						</Modal.Body>
+						<Modal.Footer>
+							<Button variant="secondary" onClick={handleClose}>
+								Close
+							</Button>
+							<Button variant="primary" onClick={() => {
+								handleClose();
+								props.onClick("edit", {
+									_id: editId,
+									owner: owner,
+									projectname: projectname,
+									projecturl: projecturl,
+									stars: stars,
+									forks: forks,
+									issues: issues,
+									created: created
+								})
+							}}>
+								Save Changes
+							</Button>
+						</Modal.Footer>
+					</Modal>
 				</Table>) : (
 					<p>No data...</p>
 				)}

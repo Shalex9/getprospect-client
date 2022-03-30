@@ -43,7 +43,7 @@ function Login() {
 	return (
 		<div className='container'>
 			<h2 style={{ marginTop: "100px" }}>Login for continue...</h2>
-			<form className='form'>
+			<form className='login-form'>
 				<div className='form-group'>
 					<input onChange={handleChange} name='email' className='form-control input' placeholder='email'></input>
 				</div>

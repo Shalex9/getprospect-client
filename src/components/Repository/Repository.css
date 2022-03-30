@@ -1,0 +1,14 @@
+.repository-form {
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	justify-content: center;
+}
+.input {
+	width: 300px !important;
+	margin: 10px;
+	height: 46px;
+}
+.button-margin {
+	margin: 0 5px 0 5px;
+}
