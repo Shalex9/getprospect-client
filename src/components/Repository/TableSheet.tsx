@@ -59,7 +59,7 @@ function TableSheet(props) {
 								<td>{item.stars}</td>
 								<td>{item.forks}</td>
 								<td>{item.issues}</td>
-								<td>{Moment(item.created).format('d MMM yyyy')}</td>
+								<td>{Moment(item.created).format('DD.MM.YYYY')}</td>
 								<td>
 									<Button onClick={() => { setEditId(item._id); setShow(true); }}
 										className="button-margin"
